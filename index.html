@@ -1,36 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="css/style.css" />
-    <title>Guess My Number!</title>
-  </head>
-  <body>
-    <header>
-      <h1 class="page-title">Guess My Number!</h1>
-      <p class="between">(Between 1 and 20)</p>
-      <button class="btn again">Again!</button>
-      <div class="number">?</div>
-    </header>
-    <main>
-      <section class="left">
-        <input type="number" id="guessInput" class="guess" />
-        <button class="btn check">Check!</button>
-      </section>
-      <section class="right">
-        <p class="message">Start guessing...</p>
-        <p class="label-score">💯 Score: <span class="score">20</span></p>
-        <p class="label-highscore">
-          🥇 Highscore: <span class="highscore">0</span>
-        </p>
-      </section>
-    </main>
-    <audio id="winningAudio" src="audio/winAudio.wav" hidden></audio>
-    <audio id="looseAudio" src="audio/looseAudio.wav" hidden></audio>
-    <audio id="buttonClickAudio" src="audio/buttonClickAudio.wav" hidden></audio>
 
-    <script src="js/script.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>Guess My Number!</title>
+</head>
+
+<body>
+  <video autoplay muted loop id="myVideo" loop>
+    <source src="/gbvideo.mp4" type="video/mp4">
+    <!-- Display a message for browsers that don't support the video tag -->
+    Your browser does not support HTML5 video.
+  </video>
+
+  <div class="start-game-overlay">
+    <button class="start-game-btn" id="startGame">START GAME</button>
+  </div>
+  <header>
+    <h1 class="page-title">Guess My Number!</h1>
+    <p class="between">(Between 1 and 20)</p>
+    <div class="game-music-container">
+      <p id="currentTrack" class="current-track"></p>
+      <div>
+        <button id="prevTrack" class="track-control-btn">
+          <svg class="play-pause-button previous-btn" version="1.0" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+            viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">
+
+            <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#ffffff" stroke="none">
+              <path d="M243 4676 c-103 -33 -191 -121 -223 -223 -20 -64 -20 -90 -20 -1893
+0 -1807 0 -1829 20 -1893 41 -132 162 -226 304 -235 143 -9 89 -46 1006 683
+454 360 828 655 832 655 4 0 9 -246 10 -548 l3 -547 28 -53 c61 -117 165 -183
+297 -190 55 -2 89 1 127 15 41 14 286 204 1180 914 620 494 1158 928 1194 965
+92 96 113 140 114 234 0 96 -23 146 -111 234 -35 36 -573 469 -1194 963 -814
+647 -1143 903 -1178 916 -71 26 -190 19 -263 -15 -69 -32 -129 -90 -166 -160
+l-28 -53 -3 -547 c-1 -302 -6 -548 -10 -548 -4 0 -378 295 -831 655 -597 474
+-837 658 -869 670 -55 18 -161 19 -219 1z" />
+            </g>
+          </svg>
+        </button>
+        <button id="pausePlayMusic" class="track-control-btn">
+          <svg class="play-pause-button" id="playIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="50"
+            viewBox="0 0 50 50">
+            <polygon points="10,5 40,25 10,45" fill="white" />
+          </svg>
+          <svg class="play-pause-button" id="pauseIcon" xmlns="http://www.w3.org/2000/svg" width="50" height="50"
+            viewBox="0 0 50 50" style="display: none;">
+            <rect x="10" y="10" width="10" height="30" fill="white" />
+            <rect x="30" y="10" width="10" height="30" fill="white" />
+          </svg>
+        </button>
+        <button id="nextTrack" class="track-control-btn">
+          <svg class="play-pause-button" version="1.0" xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+            viewBox="0 0 512.000000 512.000000" preserveAspectRatio="xMidYMid meet">
+
+            <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#ffffff" stroke="none">
+              <path d="M243 4676 c-103 -33 -191 -121 -223 -223 -20 -64 -20 -90 -20 -1893
+0 -1807 0 -1829 20 -1893 41 -132 162 -226 304 -235 143 -9 89 -46 1006 683
+454 360 828 655 832 655 4 0 9 -246 10 -548 l3 -547 28 -53 c61 -117 165 -183
+297 -190 55 -2 89 1 127 15 41 14 286 204 1180 914 620 494 1158 928 1194 965
+92 96 113 140 114 234 0 96 -23 146 -111 234 -35 36 -573 469 -1194 963 -814
+647 -1143 903 -1178 916 -71 26 -190 19 -263 -15 -69 -32 -129 -90 -166 -160
+l-28 -53 -3 -547 c-1 -302 -6 -548 -10 -548 -4 0 -378 295 -831 655 -597 474
+-837 658 -869 670 -55 18 -161 19 -219 1z" />
+            </g>
+          </svg>
+
+
+        </button>
+      </div>
+    </div>
+    <button class="btn again">Again!</button>
+    <div class="number">?</div>
+  </header>
+  <main>
+    <section class="left">
+      <input type="number" id="guessInput" class="guess" />
+      <button class="btn check">Check!</button>
+    </section>
+    <section class="right">
+      <p class="message">Start guessing...</p>
+      <p class="label-score">💯 Score: <span class="score">20</span></p>
+      <p class="label-highscore">
+        🥇 Highscore: <span class="highscore">0</span>
+      </p>
+    </section>
+  </main>
+  <audio id="gameMusic0" src="audio/track01.mp3" hidden></audio>
+  <audio id="gameMusic1" src="audio/track02.mp3" hidden></audio>
+  <audio id="gameMusic2" src="audio/track03.mp3" hidden></audio>
+  <audio id="gameMusic3" src="audio/track04.mp3" hidden></audio>
+  <audio id="gameMusic4" src="audio/track05.mp3" hidden></audio>
+  <audio id="winningAudio" src="audio/winAudio.wav" hidden></audio>
+  <audio id="looseAudio" src="audio/looseAudio.wav" hidden></audio>
+  <audio id="buttonClickAudio" src="audio/buttonClickAudio.wav" hidden></audio>
+
+  <script src="js/script.js"></script>
+</body>
+
 </html>

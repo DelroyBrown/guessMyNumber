@@ -6,6 +6,101 @@ let inputFocus = function () {
 };
 inputFocus();
 
+// overlay and play music
+document.getElementById('startGame').addEventListener('click', function () {
+  const overlay = document.querySelector('.start-game-overlay');
+  overlay.style.opacity = '0';
+
+  overlay.style.zIndex = '-2';
+  overlay.style.backgroundColor = 'transparent';
+
+  overlay.addEventListener('transitionend', function () {
+    this.style.display = 'none';
+  });
+
+  trackController.playCurrentTrack(); // Start playing
+});
+
+// Track controller
+const trackController = {
+  tracks: ['track01', 'track02', 'track03', 'track04', 'track05'],
+  currentTrackIndex: 0,
+  isPlaying: false,
+  get currentTrackName() {
+    return this.tracks[this.currentTrackIndex];
+  },
+  get currentTrackElement() {
+    return document.getElementById(`gameMusic${this.currentTrackIndex}`);
+  },
+  updateTrackDisplay() {
+    document.getElementById(
+      'currentTrack'
+    ).textContent = `Current track: ${this.currentTrackName}`;
+  },
+  playCurrentTrack() {
+    this.currentTrackElement.currentTime = 0;
+    this.currentTrackElement.play();
+    this.isPlaying = true;
+    this.updateTrackDisplay();
+    togglePlayPauseIcon(this.isPlaying);
+  },
+
+  pauseCurrentTrack() {
+    this.currentTrackElement.pause();
+    this.isPlaying = false;
+    this.updateTrackDisplay();
+    togglePlayPauseIcon(this.isPlaying);
+  },
+
+  nextTrack() {
+    this.currentTrackElement.pause();
+    this.currentTrackIndex = (this.currentTrackIndex + 1) % this.tracks.length;
+    this.isPlaying = false; // Add this line
+    this.playCurrentTrack();
+  },
+
+  prevTrack() {
+    this.currentTrackElement.pause();
+    this.currentTrackIndex =
+      (this.currentTrackIndex - 1 + this.tracks.length) % this.tracks.length;
+    this.isPlaying = false; // Add this line
+    this.playCurrentTrack();
+  },
+};
+
+document
+  .getElementById('pausePlayMusic')
+  .addEventListener('click', function () {
+    if (trackController.isPlaying) {
+      trackController.pauseCurrentTrack();
+    } else {
+      trackController.playCurrentTrack();
+    }
+  });
+
+document.getElementById('nextTrack').addEventListener('click', function () {
+  trackController.nextTrack();
+});
+
+document.getElementById('prevTrack').addEventListener('click', function () {
+  trackController.prevTrack();
+});
+
+window.onload = function () {
+  trackController.playCurrentTrack(); // Start playing
+};
+
+// Play/Pause music
+function togglePlayPauseIcon(isPlaying) {
+  if (isPlaying) {
+    document.getElementById('playIcon').style.display = 'none';
+    document.getElementById('pauseIcon').style.display = '';
+  } else {
+    document.getElementById('playIcon').style.display = '';
+    document.getElementById('pauseIcon').style.display = 'none';
+  }
+}
+
 // Initialize some variables.
 let betweenNumber = 100; // Range of the guessing number
 let secretNumber = Math.trunc(Math.random() * betweenNumber) + 1; // Randomly generated secret number.
